@@ -6,11 +6,11 @@ export const Navbar = () => {
 		<nav className="navbar navbar-light bg-light">
 			<div className="container">
 				<Link to="/">
-					<span className="navbar-brand mb-0 h1">React Boilerplate</span>
+					<button className="btn btn-outline-secondary">Volver al inicio</button>
 				</Link>
 				<div className="ml-auto">
-					<Link to="/demo">
-						<button className="btn btn-primary">Check the Context in action</button>
+					<Link to="/AddContact">
+						<button className="btn btn-success">Añadir un nuevo contacto</button>
 					</Link>
 				</div>
 			</div>
