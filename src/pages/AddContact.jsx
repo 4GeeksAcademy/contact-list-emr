@@ -1,59 +1,66 @@
-// Import necessary components from react-router-dom and other parts of the application.
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import useGlobalReducer from "../hooks/useGlobalReducer";  // Custom hook for accessing the global state.
-import { useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import useGlobalReducer from "../hooks/useGlobalReducer";
+import { useState, useEffect } from "react";
+import useContactos from "../hooks/useContacts.js";
 
 export const AddContact = () => {
-  // Access the global state and dispatch function using the useGlobalReducer hook.
-  const { store, dispatch } = useGlobalReducer()
+  const { store, dispatch } = useGlobalReducer();
+  const { addContacto, editarContacto, getContactos } = useContactos();
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  const [nombre, setNombre] = useState ("");
-  const [email, setEmail] = useState ("");
-  const [telefono, setTelefono] = useState ("");
-  const [direccion, setDireccion] = useState ("");
+  const [contacto, setContacto] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    img: "",
+  });
+
+
+
+  useEffect(() => {
+    if (id) {
+      const obtenerContactos = async () => {
+        const contactos = await getContactos();
+        console.log(contactos)
+        const contactoEncontrado = contactos.find((contacto) => contacto.id == id);
+        if (contactoEncontrado) setContacto(contactoEncontrado);
+      };
+      obtenerContactos();
+   
+    }
+  }, [id]);
+
+  const handleChange = (e) => {
+    setContacto({
+      ...contacto,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    const nuevoContacto = {
-      nombre,
-      email,
-      telefono,
-      direccion,
-      img:"https://avatars.githubusercontent.com/u/10504143?v=4"
-    };
-
-    console.log("Nuevo contacto creado:", nuevoContacto);
-
-    const nuevosContactos= [...store.contactos, nuevoContacto];
-
-    console.log("Todos los contactos (incluyendo el nuevo;", nuevosContactos)
-
-    dispatch({
-      type:"actualizar_contactos",
-      payload:{
-        arrayDeContactos: nuevosContactos
-      }
-    });
-
-    console.log("Store actualizado:", {
-      ...store,
-      contactos: nuevosContactos
-    });
-
-  }
+    if (id) {
+      editarContacto(contacto, id);
+    } else {
+      addContacto(contacto);
+    }
+    navigate("/");
+  };
 
   return (
     <div className="container">
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="name">Nombre Completo</label>
+          <label htmlFor="nombre">Nombre Completo</label>
           <input
             type="text"
             className="form-control"
-            id="fullname"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
+            id="name"
+            name="name"
+            value={contacto.name}
+            onChange={handleChange}
             placeholder="Nombre completo"
           />
         </div>
@@ -64,43 +71,61 @@ export const AddContact = () => {
             type="email"
             className="form-control"
             id="email"
-             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            name="email"
+            value={contacto.email}
+            onChange={handleChange}
             placeholder="Introduce email"
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="name">Teléfono</label>
+          <label htmlFor="telefono">Teléfono</label>
           <input
-            type="phone"
+            type="tel"
             className="form-control"
             id="phone"
-             value={telefono}
-            onChange={(e) => setTelefono(e.target.value)}
+            name="phone"
+            value={contacto.phone}
+            onChange={handleChange}
             placeholder="Introduce teléfono"
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="name">Dirección</label>
+          <label htmlFor="direccion">Dirección</label>
           <input
-            type="address"
+            type="text"
             className="form-control"
             id="address"
-             value={direccion}
-            onChange={(e) => setDireccion(e.target.value)}
+            name="address"
+            value={contacto.address}
+            onChange={handleChange}
             placeholder="Introduce dirección"
           />
         </div>
 
+        <div className="form-group">
+          <label htmlFor="img">Imagen</label>
+          <input
+            type="text"
+            className="form-control"
+            id="img"
+            name="img"
+            value={contacto.img}
+            onChange={handleChange}
+            placeholder="URL de imagen"
+          />
+        </div>
+
         <div className="d-flex justify-content-end">
-        <button type="submit" className="btn btn-primary mt-3">Añadir contacto</button>
+          <button type="submit" className="btn btn-primary mt-3">
+            {id ? "Editar contacto" : "Añadir contacto"}
+          </button>
         </div>
       </form>
 
       <Link to="/">
-        <button className="btn btn-primary mt-3">Volver a contactos</button>
+        <button className="btn btn-secondary mt-3">Volver a contactos</button>
       </Link>
     </div>
   );

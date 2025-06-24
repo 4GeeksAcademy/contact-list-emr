@@ -7,63 +7,58 @@ export default function useContactos() {
         const response = await fetch("https://playground.4geeks.com/contact/agendas/ericamoratilla/contacts");
         const data = await response.json();
 
-        dispatch({
-            type: "actualizar_contactos",
-            payload: { arrayDeContactos: data.contacts || [] }
-        });
-
-        console.log("Contactos cargados:", data.contacts);
+        return data.contacts;
     };
+
 
     //POSTEO
 
     const addContacto = async (nuevoContacto) => {
-        const response = await fetch("https://playground.4geeks.com/contact/agendas/ericamoratilla", {
+        const response = await fetch("https://playground.4geeks.com/contact/agendas/ericamoratilla/contacts", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                full_name: nuevoContacto.full_name,
+                name: nuevoContacto.name,
                 email: nuevoContacto.email,
                 agenda_slug: "ericamoratilla",
                 address: nuevoContacto.address,
-                phone: nuevoContacto.phone
+                phone: nuevoContacto.phone,
+                img: nuevoContacto.img,
             })
         });
 
         const data = await response.json();
         console.log("Contacto creado:", data);
 
-        getContactos();
+        return data;
     }
 
     // MODIFICO
     const editarContacto = async (contactoActualizado) => {
-        const response = await fetch(`https://playground.4geeks.com/contact/contactos/${contactoActualizado.id}`, {
+        const response = await fetch(`https://playground.4geeks.com/contact/agendas/ericamoratilla/contacts/${contactoActualizado.id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                full_name: contactoActualizado.full_name,
+                name: contactoActualizado.name,
                 email: contactoActualizado.email,
                 address: contactoActualizado.address,
-                phone: contactoActualizado.phone,  // Corregido: estaba usando address
-                agenda_slug: "ericamoratilla"
+                phone: contactoActualizado.phone, 
+                agenda_slug: "ericamoratilla",
+                img: contactoActualizado.img,
             })
         });
 
         const data = await response.json();
         console.log("Contacto actualizado:", data);
-        getContactos();
+        return data;
     }
 
     // BORRO
-    const deleteContacto = async (id) => {
+    const deleteContacto = async (id) => { 
         const response = await fetch(`https://playground.4geeks.com/contact/agendas/ericamoratilla/contacts/${id}`, {
             method: "DELETE"
         });
-
-        const data = await response.json();
-        console.log(`Contacto con ID ${id} eliminado:`, data);
-        getContactos();
+        return response
     };
 
     return { getContactos, addContacto, editarContacto, deleteContacto };
