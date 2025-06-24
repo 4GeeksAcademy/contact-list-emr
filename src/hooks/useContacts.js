@@ -1,7 +1,4 @@
-import useGlobalReducer from "./useGlobalReducer";
-
 export default function useContactos() {
-    const { dispatch } = useGlobalReducer();
 
     const getContactos = async () => {
         const response = await fetch("https://playground.4geeks.com/contact/agendas/ericamoratilla/contacts");

@@ -1,10 +1,8 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import useGlobalReducer from "../hooks/useGlobalReducer";
 import { useState, useEffect } from "react";
 import useContactos from "../hooks/useContacts.js";
 
 export const AddContact = () => {
-  const { store, dispatch } = useGlobalReducer();
   const { addContacto, editarContacto, getContactos } = useContactos();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -18,17 +16,15 @@ export const AddContact = () => {
   });
 
 
-
   useEffect(() => {
     if (id) {
       const obtenerContactos = async () => {
         const contactos = await getContactos();
-        console.log(contactos)
         const contactoEncontrado = contactos.find((contacto) => contacto.id == id);
         if (contactoEncontrado) setContacto(contactoEncontrado);
       };
       obtenerContactos();
-   
+
     }
   }, [id]);
 
@@ -101,19 +97,6 @@ export const AddContact = () => {
             value={contacto.address}
             onChange={handleChange}
             placeholder="Introduce dirección"
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="img">Imagen</label>
-          <input
-            type="text"
-            className="form-control"
-            id="img"
-            name="img"
-            value={contacto.img}
-            onChange={handleChange}
-            placeholder="URL de imagen"
           />
         </div>
 
